@@ -7,7 +7,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          {process.env.REACT_APP_SALUDO}
         </p>
         <a
           className="App-link"
@@ -17,6 +17,7 @@ function App() {
         >
           Learn React
         </a>
+        <a href="mailto:foo@bar.com">MAILTO</a>
       </header>
     </div>
   );
