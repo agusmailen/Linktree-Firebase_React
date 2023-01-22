@@ -19,7 +19,7 @@ export default function AuthProvider({ children, onUserLoggedIn, onUserNotLogged
                     uid: user.uid,
                     displayName: user.displayName,
                     profilePicture: '',
-                    username: '',
+                    userName: '',
                     processCompleted: false,
                 })
                 return onUserNotRegistered(user);

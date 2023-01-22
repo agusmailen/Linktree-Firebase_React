@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, getDownloadURL, getBytes } from 'firebase/storage';
 import { getFirestore, collection, addDoc, getDocs, getDoc, query, where, setDoc, deleteDoc, doc } from 'firebase/firestore';
+import { cloneElement } from "react";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_APIKEY,
@@ -66,5 +67,34 @@ export const getUserInfo = async (uid) => {
     return document.data();
   } catch(error) {
     console.log(error)
+  }
+}
+
+export const insertNewLink = async (link) => {
+  try {
+    const docRef = collection(db, 'links')
+    const res = await addDoc(docRef, link)
+    return res;
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const getLinks = async (uid) => {
+  const links = [];
+  try{
+    const collectionRef = collection(db, 'links');
+    const q = query(collectionRef, where('uid', '==', uid));
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach(doc => {
+      const link = {...doc.data()}
+      link.docId = doc.id
+      links.push(link)
+    })
+    return links;
+
+  } catch(error) {
+    console.error(error)
   }
 }
