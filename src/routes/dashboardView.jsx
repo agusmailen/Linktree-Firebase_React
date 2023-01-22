@@ -3,7 +3,8 @@ import AuthProvider from "../components/authProvider";
 import { useState } from "react";
 import DashboardWrapper from "../components/dashboardWrapper";
 import {v4 as uuidv4} from 'uuid';
-import { getLinks, insertNewLink } from "../firebase/firebase";
+import { getLinks, insertNewLink, updateLink, deleteLink } from "../firebase/firebase";
+import Link from "../components/link";
 
 
 
@@ -39,7 +40,7 @@ export default function DashboardView() {
         addLink();
     }
 
-    const addLink = () => {
+    const addLink = async() => {
         if(title != '' && url != '') {
             const newLink = {
                 id: uuidv4(),
@@ -47,11 +48,10 @@ export default function DashboardView() {
                 url: url,
                 uid: currentUser.uid,
             }
-            const res = insertNewLink(newLink)
+            const res = await insertNewLink(newLink)
             newLink.docId = res.id;
             setTitle('');
             setUrl('');
-            console.log('nuevo link', newLink)
             setLinks([...links, newLink]);
         }
     }
@@ -66,6 +66,18 @@ export default function DashboardView() {
         }
     }
 
+    const handleDeleteLink = async (docId) => {
+        deleteLink(docId);
+        const tmp = links.filter(link => link.docId != docId)
+        setLinks(tmp);
+    }
+
+    const handleUpdateLink = async (docId, title, url) => {
+        const link = links.find(item => item.docId === docId);
+        link.title = title;
+        link.url = url;
+        await updateLink(docId, link)
+    }
 
     if(state === 0) {
         return <AuthProvider
@@ -95,9 +107,14 @@ export default function DashboardView() {
                 <div>
                     {
                         links.map( link => {
-                            return (<div key={link.id}>
-                                <a href={link.url}>{link.title}</a>
-                            </div>)
+                           return <Link 
+                                key={link.docId}
+                                docId={link.docId}
+                                url={link.url}
+                                title={link.title}
+                                onDelete={handleDeleteLink}
+                                OnUpdate={handleUpdateLink}
+                            />
                         })
                     }
                 </div>
