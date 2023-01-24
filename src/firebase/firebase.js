@@ -29,13 +29,14 @@ export const userExists = async (uid) => {
 export const existsUserName = async(username) => {
   const users = [];
   const docsRef = collection(db, 'users')
-  const q = query(docsRef, where('username', '==', username));
+  const q = query(docsRef, where('userName', '==', username));
 
   const querySnapshot = await getDocs(q);
 
   querySnapshot.forEach((doc) => {
     users.push(doc.data());
   })
+
 
   return users.length > 0 ? users[0].uid : null;
 }
@@ -114,6 +115,36 @@ export const deleteLink = async (docId) => {
     const docRef = doc(db, 'links', docId);
     const res = await deleteDoc(docRef)
     return res;
+  } catch(error) {
+    console.error(error)
+  }
+}
+
+export const setUserProfilePhoto = async(uid, file) => {
+  try {
+    const imageRef = ref(storage, `images/${uid}`);
+    const resUpload = await uploadBytes(imageRef, file)
+    return resUpload
+  } catch(error) {
+    console.error(error)
+  }
+}
+
+export const getProfilePhotoUrl = async (profilePicture) => {
+  try{
+    const imageRef = ref(storage, profilePicture);
+    const url = await getDownloadURL(imageRef);
+    return url;
+  }catch(error) {
+    console.error(error)
+  }
+}
+
+export const getUserProfileInfo = async (uid) => {
+  try{
+    const profileInfo = await getUserInfo(uid);
+    const linksInfo = await getLinks(uid);
+    return { profileInfo: profileInfo, linksInfo: linksInfo }
   } catch(error) {
     console.error(error)
   }

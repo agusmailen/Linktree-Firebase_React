@@ -18,6 +18,7 @@ export default function LoginView() {
     4: no hay nadie logeado
     5: ya existe el nombre de usuario/solicitar otro
     6: nuevo username click para continuar
+    7: username no existe
     */
 
     const handleClick = async () => {
